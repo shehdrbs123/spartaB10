@@ -5,10 +5,9 @@ namespace week2
     internal class Program
     {
         static char[] arr = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-        static int i = 0;
         static int player = 0;
-        static int choice;
         static int flag = 0;
+        static int num = 0;
         static void Main(string[] args)
         {
             /*
@@ -19,13 +18,24 @@ namespace week2
                 Console.Clear();
                 Console.WriteLine("플레이어 1: X 와 플레이어 2: O\n");
                 Console.WriteLine("플레이어 {0}의 차례\n", (player + 1));
+
                 Board();
+
                 Console.WriteLine(flag);
                 do
                 {
                     Console.WriteLine("입력하세요(1~9): ");
-                    int num = int.Parse(Console.ReadLine()) - 1;
-                    if (num < 9 || num >= 0)
+                    string str = Console.ReadLine();
+
+                    while (!int.TryParse(str, out num))
+                    {
+                        Console.WriteLine("다시 입력하세요(1~9): ");
+                        str = Console.ReadLine();
+                    }
+
+                    num -= 1;
+
+                    if (num < 9 && num >= 0)
                     {
                         if (arr[num] != 'X' && arr[num] != 'O')
                         {
@@ -124,6 +134,7 @@ namespace week2
                     return 1;
                 }
             }
+
             if (arr[0] == arr[4] && arr[0] == arr[8] || arr[2] == arr[4] && arr[2] == arr[6])
             {
                 return 1;

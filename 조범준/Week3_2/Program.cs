@@ -40,7 +40,7 @@
         }
         public override string ToString()
         {
-            return $"{rank} {suit}를 뽑았습니다";
+            return $"{(int)rank} {suit}를 뽑았습니다";
         }
     }
 
@@ -141,19 +141,22 @@
 
     public class Dealer : Player
     {
-        
+        public void asdf()
+        {
+
+        }
     }
 
     public class Blackjack
     {
         Player player;
-        Dealer dealer;
+        Player dealer;
         Deck deck;
         Card card;
         public Blackjack()
         {
             player = new Player();
-            dealer = new Dealer();
+            dealer = new Player();
             deck = new Deck();
         }
 

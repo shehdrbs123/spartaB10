@@ -4,8 +4,8 @@
     {
         static void Main(string[] args)
         {
-            int[] ints = { 5, 1, 2, 3, 5 ,3,2};
-            Console.WriteLine(LargestRectangleArea(ints));
+            /*int[] ints = { 5, 1, 2, 3, 5 ,3,2};
+            Console.WriteLine(LargestRectangleArea(ints));*/
 
             /*int[][] image = new int[][] { new int[] { 1, 1, 1 }, new int[] { 1, 1, 0 }, new int[] { 1, 0, 1 } };
 
@@ -20,9 +20,9 @@
             }*/
 
 
-            /*int[] i = new int[] { 0,1,0,3,2,3};
+            int[] i = new int[] { 0,1,0,3,2,3};
 
-            Console.WriteLine(LengthOfLIS(i));*/
+            Console.WriteLine(LengthOfLIS(i));
 
         }
 
@@ -77,9 +77,9 @@
             int max = 1;
             int num;
 
-            int[] dp = new int[nums.Length];
+            int[] arr = new int[nums.Length];
 
-            dp[0] = 1;
+            arr[0] = 1;
             for (int i = 1; i < nums.Length; i++)
             {
                 num = 0;
@@ -87,14 +87,11 @@
                 {
                     if (nums[j] < nums[i])
                     {
-                        num = Math.Max(num, dp[j]);
+                        num = Math.Max(num, arr[j]);
                     }
-
-                    Console.Write($"{num}/ ");
                 }
-                dp[i] = num + 1;
-                max = Math.Max(max, dp[i]);
-                Console.WriteLine($"      {dp[i]}/");
+                arr[i] = num + 1;
+                max = Math.Max(max, arr[i]);
             }
             return max;
         }

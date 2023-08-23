@@ -559,6 +559,7 @@ namespace PrivateProject
         int playerLevel;     //플레이어 레벨
         float playerAttack;    //플레이어 공격력
         int playerDefense;   //플레이어 방어력
+        int playerExp;      //플레이어 경험치
         public int playerHp;        //플레이어 체력
         public int playerGold;      //플레이어 소지 골드
         string playerName;   //플레이어 이름
@@ -570,6 +571,7 @@ namespace PrivateProject
         {
             playerName = name;      //입력받은 이름으로 초기화
             playerJob = job;        //입력받은 직업으로 초기화
+            playerExp = 0;
             playerLevel = 1;        
             playerAttack = 10f;      
             playerDefense = 5;
@@ -585,13 +587,49 @@ namespace PrivateProject
             Console.WriteLine("상태 보기");
             Console.WriteLine("캐릭터의 정보를 표시합니다.\n");
 
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Lv. {playerLevel}");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine($"Lv. {playerLevel}\n");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine($"Exp. {playerExp} / {playerLevel * 5}");
+            Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine($"Chad( {playerJob} )");
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"공격력 : {playerAttack}");
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine($"방어력 : {playerDefense}");
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"체 력 : {playerHp}");
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"Gold : {playerGold} G\n");
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"[장착 아이템]");
+            if (mountingItem[0] != null)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write($"무기   | {mountingItem[0].itemName}");
+                Console.SetCursorPosition(25, 13);
+                Console.WriteLine($"| 효과 | 공격력 +{mountingItem[0].itemPerformance}");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"무기    장착 안함");
+            }
+
+            if (mountingItem[1] != null)
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write($"방어구 | {mountingItem[1].itemName}");
+                Console.SetCursorPosition(25, 14);
+                Console.WriteLine($"| 효과 | 방어력 +{mountingItem[1].itemPerformance}\n");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine($"방어구  장착 안함\n");
+            }
+
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"0. 나가기\n");
@@ -892,16 +930,22 @@ namespace PrivateProject
             Console.WriteLine($"체력 {playerHp}");
 
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"골드 {playerGold}\n");
+            Console.WriteLine($"골드 {playerGold}");
+
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine($"레벨 {playerLevel}");
+
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine($"경험치 {playerExp} / {playerLevel * 5}\n");
 
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("1. 쉬운 던전\t\t| 방어력 5 이상 권장");
+            Console.WriteLine("1. 쉬운 던전\t\t| 방어력 5  이상 권장 | 경험치 3");
 
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("2. 일반 던전\t\t| 방어력 11 이상 권장");
+            Console.WriteLine("2. 일반 던전\t\t| 방어력 11 이상 권장 | 경험치 7");
 
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("3. 어려운 던전\t\t| 방어력 17 이상 권장");
+            Console.WriteLine("3. 어려운 던전\t\t| 방어력 17 이상 권장 | 경험치 10");
 
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine($"0. 나가기\n");
@@ -948,7 +992,7 @@ namespace PrivateProject
                 bool isWindowState = true;
                 while (isWindowState)        //던전 결과 창에서 0을 입력하지 않았다면 true 입력했다면 false를 반환
                 {
-                    isWindowState = DungeonResults("쉬운", 5, 1000);   //장착 관리 창으로 이동
+                    isWindowState = DungeonResults("쉬운", 5, 1000, 3);   //장착 관리 창으로 이동
                 }
                 return true;
             }
@@ -964,7 +1008,7 @@ namespace PrivateProject
                 bool isWindowState = true;
                 while (isWindowState)        //던전 결과 창에서 0을 입력하지 않았다면 true 입력했다면 false를 반환
                 {
-                    isWindowState = DungeonResults("일반", 11, 1700);   //아이템 정렬 창으로 이동
+                    isWindowState = DungeonResults("일반", 11, 1700, 7);   //아이템 정렬 창으로 이동
                 }
                 return true;
             }
@@ -980,7 +1024,7 @@ namespace PrivateProject
                 bool isWindowState = true;
                 while (isWindowState)        //던전 결과 창에서 0을 입력하지 않았다면 true 입력했다면 false를 반환
                 {
-                    isWindowState = DungeonResults("어려운", 17, 2500);   //아이템 정렬 창으로 이동
+                    isWindowState = DungeonResults("어려운", 17, 2500, 10);   //아이템 정렬 창으로 이동
                 }
                 return true;
             }
@@ -995,7 +1039,7 @@ namespace PrivateProject
             return false;
         }
 
-        public bool DungeonResults(string str,int num, int gold)
+        public bool DungeonResults(string str,int num, int gold, int exp)
         {
             Random ran = new Random();
             int i = 100;
@@ -1017,6 +1061,27 @@ namespace PrivateProject
 
                 int damage = ran.Next(20, 36);      //20 ~ 35 사이 데미지
                 int getGold = gold + (gold * ran.Next((int)(playerAttack * 10), (int)(playerAttack * 20) + 1) / 1000);  //%값을 구한후 보상에 더함
+                playerExp += exp;
+                if ((playerLevel * 5) < playerExp)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("\n====================================");
+                    Console.WriteLine("         레벨 업 하셨습니다.");
+                    Console.WriteLine("====================================\n");
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine($"레벨 {++playerLevel}");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine($"경험치 {playerExp -= (playerLevel - 1) * 5} / {playerLevel * 5}");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"공격력 {playerAttack} -> {playerAttack += 0.5f}");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine($"방어력 {playerDefense} -> {playerDefense += 1}\n");
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine($"경험치 {playerExp} / {playerLevel * 5}");
+                }
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("체력 {0} -> {1}", playerHp, (playerHp -= damage));

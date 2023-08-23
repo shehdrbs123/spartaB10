@@ -1,0 +1,54 @@
+﻿CommandInVilliageTop|{0} 마을에 오신 여러분 환영합니다.\n이곳에서 던전으로 들어가기 전 활동을 할 수 있습니다. 
+RequestCommand|원하시는 행동을 입력해주세요
+Sparta|스파르타
+CommandInVilliage|마을가기
+CommandInStatus|상태보기
+CommandInStatusTop|상태보기\n캐릭터의 정보가 표시됩니다.
+Level|Lv. {0:D2}
+Job|Char( {0} )
+Attack|공격력 : {0} {1}
+Defense|방어력 : {0} {1}
+Health|체 력 : {0} {1}
+Gold|{0} G
+ItemList|[아이템 목록]
+CommandInInventory|인벤토리
+CommandInInventoryTop|인벤토리\n보유 중인 아이템을 관리할 수 있습니다.
+CommandInInventoryEquip|장비 관리
+CommandInInventoryEquipTop|인벤토리 - 장착 관리\n보유 중인 아이템을 장착할 수 있습니다.
+OldSword|낡은 검
+OldSwordDescription|관리가 제대로 이루어지지 않아 녹이 슨 검이다.
+LeatherArmor|가죽 갑옷
+LeatherArmorDescription|잘 무두질 된 가죽으로 만든 가죽 갑옷이다, 생각보다 질겨서 좋다.
+CastIronArmor|무쇠 갑옷
+CastIronArmorDescription|대충 만든 철을 얆게 펴 만든 철갑옷이다
+CastIronBoots|무쇠 신발
+CastIronBootsDescription|대충 만든 철을 얇게 펴 조직한 신발이다, 대충 만들어서 그런가 무겁다.
+SteelSword|강철 검
+SteelSwordDescription|숙련된 장인의 엄청난 솜씨로 탄생한 강철을 검으로 만들었다. 예리하다
+DragonHelmet|드래곤 가죽 갑옷
+DragonHelmetDescription|드래곤의 가죽으로 만든 셔츠다, 상당히 질기고 강하다.
+CommandInStore|상점가기
+CommandInStoreTop|상점\n필요한 아이템을 얻을 수 있는 상점입니다.
+CommandInStoreBuy|구매하기
+CommandInStoreBuyTop|상점-구매하기\n필요한 아이템을 구매할 수 있습니다.
+CommandInStoreSell|판매하기
+CommandInStoreSellTop|상점-판매하기\n현재 아이템을 팔 수 있습니다.
+CommandBuyTop|상점-구매하기\n필요한 아이템을 얻을 수 있는 상점입니다.
+CommandSellTop|상점-판매하기\n현재 아이템을 팔 수 있습니다.
+GoldTop|[보유 골드]
+Bought|구매완료
+Selled|판매완료
+NotEnoughMoney|잔액이 부족합니다.
+AlreadyBuy|이미 구매한 물품입니다.
+CommandInDungoen|던전가기
+CommandInDungoenTop|던전가기\n이곳에서 던전으로 들어아기전 활동을 할 수 있습니다.
+CommandDungoenClear|던전 클리어\n축하합니다!!\n{0}을 클리어 하였습니다.
+CommandDungoenDefeat|패배!!!!!\n아쉽군요!!\n난이도가 낮은 던전이나, 캐릭터의 능력을 올려보세요
+Easy|쉬운 던전
+Medium|일반 던전
+Hard|어려운 던전
+ExploreResult|[탐험 결과]
+BaseDefense|권장 방어력
+ResultHealth|체력 {0} -> {1}
+ResultGold|Gold {0} G -> {1} G
+END

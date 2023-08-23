@@ -1,0 +1,2 @@
+﻿Sparta|5|OldSword|LeatherArmor|CastIronArmor|CastIronBoots|DragonHelmet
+END

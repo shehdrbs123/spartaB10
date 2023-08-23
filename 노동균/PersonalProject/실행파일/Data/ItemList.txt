@@ -1,0 +1,7 @@
+﻿OldSword|OldSwordDescription|Hand|Attack|2|600
+LeatherArmor|LeatherArmorDescription|Shirt|Defense|3|1000
+CastIronArmor|CastIronArmorDescription|Shirt|Defense|5|3000
+CastIronBoots|CastIronBootsDescription|Shoes|Defense|3|3000
+SteelSword|SteelSwordDescription|Hand|Attack|10|6000
+DragonHelmet|DragonHelmetDescription|Head|Defense|10|10000
+END

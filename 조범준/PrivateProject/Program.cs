@@ -588,11 +588,11 @@ namespace PrivateProject
             Console.WriteLine("캐릭터의 정보를 표시합니다.\n");
 
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine($"Lv. {playerLevel}\n");
+            Console.WriteLine($"레벨 {playerLevel}\n");
             Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine($"Exp. {playerExp} / {playerLevel * 5}");
+            Console.WriteLine($"경험치 {playerExp} / {playerLevel * 5}");
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine($"Chad( {playerJob} )");
+            Console.WriteLine($"직업( {playerJob} )");
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"공격력 : {playerAttack}");
             Console.ForegroundColor = ConsoleColor.Blue;
@@ -600,7 +600,7 @@ namespace PrivateProject
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"체 력 : {playerHp}");
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"Gold : {playerGold} G\n");
+            Console.WriteLine($"보유 골드 : {playerGold} G\n");
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"[장착 아이템]");

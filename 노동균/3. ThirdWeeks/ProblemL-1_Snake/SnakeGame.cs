@@ -1,10 +1,15 @@
 ﻿// See https://aka.ms/new-console-template for more information
+
+using System.Collections;
+using System.Windows;
+
 class SnakeGame
 {
     static void Main(string[] args)
     {
         SnakePlayer player = new SnakePlayer(300);
         player.Play();
+        
     }
 }
 public enum FieldType
@@ -29,6 +34,8 @@ public class SnakePlayer
         if (SetBoard())
         {
             OperateGame();
+            List<int> test;
+            
         }
     }
 
@@ -40,8 +47,8 @@ public class SnakePlayer
         foodCreator = new FoodCreateor();
         Point initPos = new Point(2, 2, FieldType.BLOCK);
         snake.Init(initPos,Direction.RIGHT);
-        board.LocateObject(snake.Root);
         
+        board.LocateObject(snake.Root);
         foodCreator.SetPosFood(board);
         return isOk;
     }
@@ -84,6 +91,7 @@ public class SnakePlayer
                 }
             }
             Thread.Sleep(gameSpeed);
+            
             //다음 위치를 미리 보고 판단
             Point newPos = new Point();
             snake.NextPos(ref newPos);
@@ -105,7 +113,6 @@ public class SnakePlayer
 
             //board.LocateObject(snake.Root);
             board.LocateObject(snake.snakeTails.ToArray());
-  
         }
     }
     
@@ -118,6 +125,7 @@ public class SnakePlayer
         public Snake()
         {
             snakeTails = new Queue<Point>();
+            
         }
         
         public void Init(Point firstPos, Direction direction)
@@ -249,6 +257,7 @@ public class SnakePlayer
             foreach (var pos in posList)
             {
                 LocateObject(pos.x, pos.y, pos.sym);
+                
             }
 
             return true;

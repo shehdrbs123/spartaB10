@@ -22,11 +22,11 @@ namespace PrivateProject
             // 플레이어 아이템 추가
             item = new Item("무쇠갑옷", 9, "방어구", true, "무쇠로 만들어져 튼튼한 갑옷입니다.", 2000);
             player.ItemAdd(item);
-            item = new Item("낡은 검", 2, "무기", false, "쉽게 볼 수 있는 낡은 검입니다.", 600);
+            item = new Item("낡은 검", 2, "무기", true, "쉽게 볼 수 있는 낡은 검입니다.", 600);
             player.ItemAdd(item);
-            item = new Item("좋은 검", 4, "무기", false, "쉽게 볼 수 없는 좋은 검입니다.", 1000);
+            item = new Item("좋은 검", 4, "무기", true, "쉽게 볼 수 없는 좋은 검입니다.", 1000);
             player.ItemAdd(item);
-            item = new Item("가죽갑옷", 3, "방어구", false, "가죽으로 만들어져 매끄러운 갑옷입니다.", 800);
+            item = new Item("가죽갑옷", 3, "방어구", true, "가죽으로 만들어져 매끄러운 갑옷입니다.", 800);
             player.ItemAdd(item);
 
             // 상점 아이템 추가
@@ -444,6 +444,7 @@ namespace PrivateProject
         public void StoreItemAdd(Item item)
         {
             Array.Resize(ref items, items.Length + 1);          //items 배열의 정보는 유지하면서 배열의 크기 1증가시켜준다
+            item.mountingStatus = false;
             items[items.Length - 1] = item;
         }
 
@@ -499,6 +500,7 @@ namespace PrivateProject
         string playerName;   //플레이어 이름
         string playerJob;    //플레이어 직업
         public Item[] items;    //아이템 저장 배열\
+        Item[] mountingItem = new Item[2];      //0번 무기 1번 방어구
 
         public Player(string name, string job) //생성자
         {
@@ -914,11 +916,33 @@ namespace PrivateProject
             {   
                 if (item.sortation == "무기")
                 {
-                    playerAttack += item.itemPerformance;
+                    if (mountingItem[0] == null)
+                    {
+                        mountingItem[0] = item;
+                        playerAttack += item.itemPerformance;
+                    }
+                    else
+                    {
+                        playerAttack -= mountingItem[0].itemPerformance;
+                        mountingItem[0].mountingStatus = false;
+                        mountingItem[0] = item;
+                        playerAttack += item.itemPerformance;
+                    }
                 }
                 else if(item.sortation == "방어구")
                 {
-                    playerDefense += item.itemPerformance;
+                    if (mountingItem[1] == null)
+                    {
+                        mountingItem[1] = item;
+                        playerDefense += item.itemPerformance;
+                    }
+                    else
+                    {
+                        playerDefense -= mountingItem[1].itemPerformance;
+                        mountingItem[1].mountingStatus = false;
+                        mountingItem[1] = item;
+                        playerDefense += item.itemPerformance;
+                    }
                 }
             }
             else                                    //아이템이 장착 상태가 아니라면

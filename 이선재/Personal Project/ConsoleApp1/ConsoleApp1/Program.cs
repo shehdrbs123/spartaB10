@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -17,6 +17,8 @@ public enum Scene {
 }
 internal class Program
 {
+    const string dataPath = @"..\..\..\gamedata.json";
+
     private static Scene scene = Scene.None;
 
     private static Character player;
@@ -102,7 +104,7 @@ internal class Program
         // 파일없을때 에러 처리
         try
         {
-            string jsonString = File.ReadAllText(@"..\..\..\gamedata.json");
+            string jsonString = File.ReadAllText(dataPath);
 
             player = JsonConvert.DeserializeObject<Character>(jsonString);
 
@@ -127,7 +129,7 @@ internal class Program
     {
         // Json 포멧으로 시리얼라이징
         string jsonString = JsonConvert.SerializeObject(player);
-        File.WriteAllText(@"..\..\..\gamedata.json", jsonString);
+        File.WriteAllText(dataPath, jsonString);
     }
 
 #region Display

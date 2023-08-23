@@ -2,10 +2,10 @@
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace PrivateProject
 {
-
     internal class Program
     {
         static Player player;
@@ -22,11 +22,11 @@ namespace PrivateProject
             // 플레이어 아이템 추가
             item = new Item("무쇠갑옷", 9, "방어구", true, "무쇠로 만들어져 튼튼한 갑옷입니다.", 2000);
             player.ItemAdd(item);
-            item = new Item("낡은 검", 2, "무기", false, "쉽게 볼 수 있는 낡은 검입니다.", 600);
+            item = new Item("낡은 검", 2, "무기", true, "쉽게 볼 수 있는 낡은 검입니다.", 600);
             player.ItemAdd(item);
-            item = new Item("좋은 검", 4, "무기", false, "쉽게 볼 수 없는 좋은 검입니다.", 1000);
+            item = new Item("좋은 검", 4, "무기", true, "쉽게 볼 수 없는 좋은 검입니다.", 1000);
             player.ItemAdd(item);
-            item = new Item("가죽갑옷", 3, "방어구", false, "가죽으로 만들어져 매끄러운 갑옷입니다.", 800);
+            item = new Item("가죽갑옷", 3, "방어구", true, "가죽으로 만들어져 매끄러운 갑옷입니다.", 800);
             player.ItemAdd(item);
 
             // 상점 아이템 추가
@@ -51,15 +51,31 @@ namespace PrivateProject
 
         public static void StartScene()     //메인 화면 창
         {
+            Console.Clear();
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("\n스파르타 마을에 오신 여러분 환영합니다.");
             Console.WriteLine("이곳에서 던전으로 들어가기 전 활동을 할 수 있습니다.\n");
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"보유 골드 {player.playerGold}");
+
             Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"현재 체력 {player.playerHp}\n");
+
             Console.WriteLine("1. 상태 보기");
+
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("2. 인벤토리");
+
             Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine("3. 상점\n");
+            Console.WriteLine("3. 상점");
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("4. 던전입장");
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("5. 휴식하기 ( 500 G )\n");
+
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write("원하시는 행동을 입력해주세요.\n>> ");
             string actionStr = Console.ReadLine();
@@ -71,7 +87,7 @@ namespace PrivateProject
             행동 번호들이 늘어나면 아래 if문에 계속 추가하여 사용해도 된다
             */
 
-            if (actionNum != 1 && actionNum != 2 && actionNum != 3)
+            if (actionNum < 1 || actionNum > 5)
                 isNum = false;
 
             while (!isNum)
@@ -79,7 +95,7 @@ namespace PrivateProject
                 Console.Write("\n잘못 입력하셧습니다. \n다시 입력하세요\n>> ");
                 actionStr = Console.ReadLine();
                 isNum = int.TryParse(actionStr, out actionNum);
-                if (actionNum != 1 && actionNum != 2 && actionNum != 3)
+                if (actionNum < 1 || actionNum > 5)
                 {
                     isNum = false;
                 }
@@ -122,6 +138,54 @@ namespace PrivateProject
                 while (isWindowState)       //인벤토리창에서 0을 입력하지 않았다면 true 입력했다면 false를 반환
                 {
                     isWindowState = store.ItemStoreWindow();
+                }
+            }
+            else if( actionNum == 4)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("====================================");
+                Console.WriteLine("    던전 입장 창으로 이동합니다.");
+                Console.WriteLine("====================================");
+                Thread.Sleep(1000);
+
+                bool isWindowState = true;
+                while (isWindowState)       //던전입장 창에서 0을 입력하지 않았다면 true 입력했다면 false를 반환
+                {
+                    isWindowState = player.DungeonWindow();
+                }
+            }
+            else if(actionNum == 5)
+            {
+                if (player.playerHp == 100)
+                {
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.WriteLine("====================================");
+                    Console.WriteLine("       이미 체력이 충분합니다.");
+                    Console.WriteLine("====================================");
+
+                    Thread.Sleep(1000);
+                }
+                else if (player.playerGold >= 500)
+                {
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.WriteLine("====================================");
+                    Console.WriteLine("        휴식을 완료했습니다.");
+                    Console.WriteLine("====================================\n");
+
+                    Console.WriteLine("보유 골드 {0} -> {1}", player.playerGold, player.playerGold -= 500);
+                    Console.WriteLine("체력 {0} -> 100",player.playerHp);
+                    player.playerHp = 100;
+
+                    Thread.Sleep(1000);
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("====================================");
+                    Console.WriteLine("        Gold 가 부족합니다.");
+                    Console.WriteLine("====================================\n");
+
+                    Thread.Sleep(1000);
                 }
             }
         }
@@ -444,6 +508,7 @@ namespace PrivateProject
         public void StoreItemAdd(Item item)
         {
             Array.Resize(ref items, items.Length + 1);          //items 배열의 정보는 유지하면서 배열의 크기 1증가시켜준다
+            item.mountingStatus = false;
             items[items.Length - 1] = item;
         }
 
@@ -494,18 +559,19 @@ namespace PrivateProject
         int playerLevel;     //플레이어 레벨
         float playerAttack;    //플레이어 공격력
         int playerDefense;   //플레이어 방어력
-        int playerHp;        //플레이어 체력
+        public int playerHp;        //플레이어 체력
         public int playerGold;      //플레이어 소지 골드
         string playerName;   //플레이어 이름
         string playerJob;    //플레이어 직업
         public Item[] items;    //아이템 저장 배열\
+        Item[] mountingItem = new Item[2];      //0번 무기 1번 방어구
 
         public Player(string name, string job) //생성자
         {
             playerName = name;      //입력받은 이름으로 초기화
             playerJob = job;        //입력받은 직업으로 초기화
             playerLevel = 1;        
-            playerAttack = 10;      
+            playerAttack = 10f;      
             playerDefense = 5;
             playerHp = 100;
             playerGold = 1500;
@@ -814,6 +880,197 @@ namespace PrivateProject
             return false;
         }
 
+        public bool DungeonWindow()
+        {
+            int j = 5;
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("던전입장");
+            Console.WriteLine("이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.\n");
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"체력 {playerHp}");
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"골드 {playerGold}\n");
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("1. 쉬운 던전\t\t| 방어력 5 이상 권장");
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("2. 일반 던전\t\t| 방어력 11 이상 권장");
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("3. 어려운 던전\t\t| 방어력 17 이상 권장");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine($"0. 나가기\n");
+            Console.Write($"원하시는 행동을 입력해주세요.\n>> ");
+            string actionStr = Console.ReadLine();
+            int actionNum = 0;
+            bool isNum = int.TryParse(actionStr, out actionNum);
+
+            //bool선택이유 (메인문 StartScene 사용이유와 같다)
+
+            if (actionNum != 0 && actionNum != 1 && actionNum != 2 && actionNum != 3)
+                isNum = false;
+
+            while (!isNum)          //0, 1, 2번을 누르지 않았다면
+            {
+                Console.Write("\n잘못 입력하셧습니다. \n다시 입력하세요\n>> ");
+                actionStr = Console.ReadLine();
+                isNum = int.TryParse(actionStr, out actionNum);
+                if (actionNum != 0 && actionNum != 1 && actionNum != 2 && actionNum != 3)
+                {
+                    isNum = false;
+                }
+            }
+
+            Console.WriteLine();
+
+            
+            if (playerHp < 36 && actionNum != 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("====================================");
+                Console.WriteLine("    체력이 부족해 입장불가입니다.");
+                Console.WriteLine("====================================");
+            }
+            else if (actionNum == 1)         //장착관리 창으로 이동
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("====================================");
+                Console.WriteLine("      쉬운 던전으로 입장합니다.");
+                Console.WriteLine("====================================");
+
+                Thread.Sleep(1000);
+
+                bool isWindowState = true;
+                while (isWindowState)        //던전 결과 창에서 0을 입력하지 않았다면 true 입력했다면 false를 반환
+                {
+                    isWindowState = DungeonResults("쉬운", 5, 1000);   //장착 관리 창으로 이동
+                }
+                return true;
+            }
+            else if (actionNum == 2)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("====================================");
+                Console.WriteLine("      일반 던전으로 입장합니다.");
+                Console.WriteLine("====================================");
+
+                Thread.Sleep(1000);
+
+                bool isWindowState = true;
+                while (isWindowState)        //던전 결과 창에서 0을 입력하지 않았다면 true 입력했다면 false를 반환
+                {
+                    isWindowState = DungeonResults("일반", 11, 1700);   //아이템 정렬 창으로 이동
+                }
+                return true;
+            }
+            else if (actionNum == 3)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("====================================");
+                Console.WriteLine("     어려운 던전으로 입장합니다.");
+                Console.WriteLine("====================================");
+
+                Thread.Sleep(1000);
+
+                bool isWindowState = true;
+                while (isWindowState)        //던전 결과 창에서 0을 입력하지 않았다면 true 입력했다면 false를 반환
+                {
+                    isWindowState = DungeonResults("어려운", 17, 2500);   //아이템 정렬 창으로 이동
+                }
+                return true;
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("====================================");
+            Console.WriteLine("      메인 화면으로 이동합니다.");
+            Console.WriteLine("====================================");
+
+            Thread.Sleep(1000);
+            Console.Clear();
+            return false;
+        }
+
+        public bool DungeonResults(string str,int num, int gold)
+        {
+            Random ran = new Random();
+            int i = 100;
+            Console.Clear();
+            if (playerDefense < num)
+            {
+                i = ran.Next(1, 101);
+            }
+
+            if (i > 40)
+            {
+                Console.WriteLine("던전 클리어");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("축하합니다!!");
+                Console.WriteLine($"{str} 던전을 클리어 하였습니다.");
+
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("\n[탐험 결과]");
+
+                int damage = ran.Next(20, 36);      //20 ~ 35 사이 데미지
+                int getGold = gold + (gold * ran.Next((int)(playerAttack * 10), (int)(playerAttack * 20) + 1) / 1000);  //%값을 구한후 보상에 더함
+
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("체력 {0} -> {1}", playerHp, (playerHp -= damage));
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Gold {0} G -> {1}",playerGold, (playerGold += getGold));
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("던전 실패");
+                Console.WriteLine($"{str} 던전을 실패 하였습니다.");
+
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("\n[탐험 결과]");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("체력 {0} -> {1}", playerHp, (playerHp /= 2));
+            }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"\n0. 나가기\n");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write($"원하시는 행동을 입력해주세요.\n>> ");
+            string actionStr = Console.ReadLine();
+            int actionNum = 0;
+            bool isNum = int.TryParse(actionStr, out actionNum);
+
+            //bool선택이유 (메인문 StartScene 사용이유와 같다)
+
+            if (actionNum != 0)
+                isNum = false;
+
+            while (!isNum)
+            {
+                Console.Write("\n잘못 입력하셧습니다. \n다시 입력하세요\n>> ");
+                actionStr = Console.ReadLine();
+                isNum = int.TryParse(actionStr, out actionNum);
+                if (actionNum != 0)
+                {
+                    isNum = false;
+                }
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("====================================");
+            Console.WriteLine("     던전 입장 창으로 이동합니다.");
+            Console.WriteLine("====================================");
+
+            Thread.Sleep(1000);
+            Console.Clear();
+            return false;
+        }
+
         public void SortItem(int num)          //아이템 정렬
         {
             if ( num == 1)
@@ -880,8 +1137,16 @@ namespace PrivateProject
                 {
                     if (items[i].mountingStatus)                //장착상태였다면
                     {
-                        items[i].mountingStatus = false;            //장착을 해제시키고
-                        ItemPerformanceApplication(items[i]);       //효과 적용후
+                        if (items[i].sortation == "무기")         //파는 아이템이 무기면
+                        {
+                            playerAttack -= mountingItem[0].itemPerformance;    //무기배열안에 있는 무기의 효과를 빼고
+                            mountingItem[0] = null;                 //무기배열을 비운다
+                        }
+                        else if (items[i].sortation == "방어구")       //파는 아이템이 방어구라면
+                        {
+                            playerDefense -= mountingItem[1].itemPerformance;   //방어구배열안에 있는 방어구 효과를 빼고
+                            mountingItem[1] = null;                 //방어구배열을 비운다
+                        }
                     }
                     items = items.Where(num => num != item).ToArray();  //아이템을 배열에서 삭제
                     return item;    //아이템을 리턴해주어 상점에 추가 다수의 아이템이 삭제되는것을 방지하기 위해 여기서 리턴
@@ -910,26 +1175,37 @@ namespace PrivateProject
 
         public void ItemPerformanceApplication(Item item)        //아이템이 장착유무에 따른 효과 적용 함수
         {
-            if (item.mountingStatus)                //아이템이 장착 상태라면
+            if (item.mountingStatus)                //아이템이 장착 상태로 들어왔다면
             {   
                 if (item.sortation == "무기")
                 {
-                    playerAttack += item.itemPerformance;
+                    if (mountingItem[0] == null)            //무기넣는 배열에 아무것도 없다면
+                    {
+                        mountingItem[0] = item;             //무기를 넣는다
+                        playerAttack += item.itemPerformance;
+                    }
+                    else                                    //무기넣는 배열에 무기가 존재한다면
+                    {
+                        playerAttack -= mountingItem[0].itemPerformance;    //무기배열안에 있는 무기의 효과를 빼고
+                        mountingItem[0].mountingStatus = false;         //무기배열의 장착상태를 false로 바꾸고
+                        mountingItem[0] = item;                         //무기를 넣는다
+                        playerAttack += item.itemPerformance;
+                    }
                 }
                 else if(item.sortation == "방어구")
                 {
-                    playerDefense += item.itemPerformance;
-                }
-            }
-            else                                    //아이템이 장착 상태가 아니라면
-            {
-                if (item.sortation == "무기")
-                {
-                    playerAttack -= item.itemPerformance;
-                }
-                else if (item.sortation == "방어구")
-                {
-                    playerDefense -= item.itemPerformance;
+                    if (mountingItem[1] == null)
+                    {
+                        mountingItem[1] = item;
+                        playerDefense += item.itemPerformance;
+                    }
+                    else
+                    {
+                        playerDefense -= mountingItem[1].itemPerformance;
+                        mountingItem[1].mountingStatus = false;
+                        mountingItem[1] = item;
+                        playerDefense += item.itemPerformance;
+                    }
                 }
             }
         }

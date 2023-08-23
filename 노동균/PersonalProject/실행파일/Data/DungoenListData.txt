@@ -1,0 +1,2 @@
+﻿Sparta|3|Easy|Medium|Hard
+END

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
 
@@ -171,12 +172,6 @@ namespace PrivateProject
             player = _player;
         }
 
-        public void StoreItemAdd(Item item)
-        {
-            Array.Resize(ref items, items.Length + 1);          //items 배열의 정보는 유지하면서 배열의 크기 1증가시켜준다
-            items[items.Length - 1] = item;
-        }
-
         public bool ItemStoreWindow()
         {
             int j = 8;
@@ -200,11 +195,12 @@ namespace PrivateProject
             {
                 Console.Write($"- {item.itemName}");
 
-                StoreItemList(item, j++);
+                StoreItemList(item, j++, "구매");
             }
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"\n1. 아이템 구매");
+            Console.WriteLine($"2. 아이템 판매");
             Console.WriteLine($"0. 나가기\n");
 
             Console.ForegroundColor = ConsoleColor.White;
@@ -215,7 +211,7 @@ namespace PrivateProject
 
             //bool선택이유 (메인문 StartScene 사용이유와 같다)
 
-            if (actionNum != 0 && actionNum != 1)
+            if (actionNum != 0 && actionNum != 1 && actionNum != 2)
                 isNum = false;
 
             Console.WriteLine();
@@ -225,7 +221,7 @@ namespace PrivateProject
                 Console.Write("\n잘못 입력하셧습니다. \n다시 입력하세요\n>> ");
                 actionStr = Console.ReadLine();
                 isNum = int.TryParse(actionStr, out actionNum);
-                if (actionNum != 0 && actionNum != 1)
+                if (actionNum != 0 && actionNum != 1 && actionNum != 2)
                 {
                     isNum = false;
                 }
@@ -248,6 +244,23 @@ namespace PrivateProject
                 return true;
             }
 
+            if (actionNum == 2)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("====================================");
+                Console.WriteLine("    아이템 판매 창으로 이동합니다.");
+                Console.WriteLine("====================================");
+
+                Thread.Sleep(1000);
+
+                bool isWindowState = true;
+                while (isWindowState)        //장착 관리 창에서 0을 입력하지 않았다면 true 입력했다면 false를 반환
+                {
+                    isWindowState = itemSellWindow();   //장착 관리 창으로 이동
+                }
+                return true;
+            }
+
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine();
             Console.WriteLine("====================================");
@@ -265,7 +278,7 @@ namespace PrivateProject
             int i = 1;
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("상점");
+            Console.WriteLine("상점 - 아이템 구매");
             Console.WriteLine("필요한 아이템을 얻을 수 잇는 상점입니다.\n");
 
             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -283,7 +296,7 @@ namespace PrivateProject
             {
                 Console.Write($"- {i++} {item.itemName}");
 
-                StoreItemList(item, j++);
+                StoreItemList(item, j++, "구매");
             }
 
             Console.ForegroundColor = ConsoleColor.Green;
@@ -304,6 +317,7 @@ namespace PrivateProject
 
             while (!isNum)      //0, 1 을 누르지 않았다면
             {
+
                 Console.Write("\n잘못 입력하셧습니다. \n다시 입력하세요\n>> ");
                 actionStr = Console.ReadLine();
                 isNum = int.TryParse(actionStr, out actionNum);
@@ -332,12 +346,87 @@ namespace PrivateProject
             return false;
         }
 
+        public bool itemSellWindow()
+        {
+            int j = 8;
+            int i = 1;
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("상점 - 아이템 판매");
+            Console.WriteLine("필요한 아이템을 얻을 수 잇는 상점입니다.\n");
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("[보유 골드]");
+            Console.WriteLine($"{player.playerGold} G\n");
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("[아이템 목록]");
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("  아이템이름\t\t효과\t\t  설명");
+
+            Console.ForegroundColor = ConsoleColor.Blue;
+            foreach (Item item in player.items)
+            {
+                Console.Write($"- {i++} {item.itemName}");
+
+                StoreItemList(item, j++, "판매");
+            }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"\n0. 나가기\n");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("원하시는 행동을 입력해주세요.\n>> ");
+            string actionStr = Console.ReadLine();
+            int actionNum = 0;
+            bool isNum = int.TryParse(actionStr, out actionNum);
+
+            //bool선택이유 (메인문 StartScene 사용이유와 같다)
+
+            if (actionNum != 0 && actionNum > player.items.Length || actionNum < 0)
+                isNum = false;
+
+            Console.WriteLine();
+
+            while (!isNum)      //0, 1 을 누르지 않았다면
+            {
+                Console.Write("\n잘못 입력하셧습니다. \n다시 입력하세요\n>> ");
+                actionStr = Console.ReadLine();
+                isNum = int.TryParse(actionStr, out actionNum);
+                if (actionNum != 0 && actionNum > player.items.Length || actionNum < 0)
+                {
+                    isNum = false;
+                }
+            }
+
+            if (actionNum > 0 && actionNum <= player.items.Length)
+            {
+                Sell(actionNum);
+                Thread.Sleep(1000);
+                Console.Clear();
+                return true;
+            }
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine();
+            Console.WriteLine("====================================");
+            Console.WriteLine("       상점 창으로 이동합니다.");
+            Console.WriteLine("====================================");
+
+            Thread.Sleep(1000);
+            Console.Clear();
+            return false;
+        }
+
         public void Purchas(int num)
         {
             if (player.playerGold >= items[num - 1].itemPrice)
             {
                 Console.WriteLine("구매를 완료했습니다.");
                 player.playerGold -= items[num - 1].itemPrice;
+                player.ItemAdd(items[num - 1]);
+                StoreItemDelete(items[num - 1]);
             }
             else
             {
@@ -345,7 +434,32 @@ namespace PrivateProject
             }
         }
 
-        public void StoreItemList(Item item, int j)
+        public void Sell(int num)
+        {
+            Console.WriteLine("판매를 완료했습니다.");
+            player.playerGold += (player.items[num - 1].itemPrice / 100 * 85);
+            StoreItemAdd(player.ItemDelete(player.items[num - 1]));
+        }
+
+        public void StoreItemAdd(Item item)
+        {
+            Array.Resize(ref items, items.Length + 1);          //items 배열의 정보는 유지하면서 배열의 크기 1증가시켜준다
+            items[items.Length - 1] = item;
+        }
+
+        public void StoreItemDelete(Item item)                      //아이템을 구매하면 실행되는 메서드
+        {   
+            for (int i = 0; i < items.Length; i++)                  
+            {
+                if (items[i].itemName == item.itemName)
+                {
+                    items = items.Where(num => num != item).ToArray();          //상점 아이템 배열에서 해당 아이템 삭제
+                    return;
+                }
+            }
+        }
+
+        public void StoreItemList(Item item, int j, string str)
         {
             Console.SetCursorPosition(20, j);
             if (item.sortation == "방어구")
@@ -358,24 +472,33 @@ namespace PrivateProject
             }
             else                //무기나 방어구가 아니면 잡동사니 나중에 다른 종류가 생기면 else if 문으로 추가
             {
-                Console.Write("| 잡동 사니 {0, -3}");
+                Console.Write("| 잡동 사니  ");
             }
+
             Console.Write(String.Format("|  {0, -30}", item.itemExplanation));
+
             Console.SetCursorPosition(90, j);
-            Console.WriteLine($"| {item.itemPrice} G");
+            if(str == "구매")                             //구매 창과 판매 창에 표시되는 가격이 달라서 if문 사용
+            {
+                Console.WriteLine($"| {item.itemPrice} G");
+            }
+            else if(str == "판매")
+            {
+                Console.WriteLine("| {0} G", (item.itemPrice / 100 * 85));
+            }
         }
     }
 
     public class Player
     {
         int playerLevel;     //플레이어 레벨
-        int playerAttack;    //플레이어 공격력
+        float playerAttack;    //플레이어 공격력
         int playerDefense;   //플레이어 방어력
         int playerHp;        //플레이어 체력
         public int playerGold;      //플레이어 소지 골드
         string playerName;   //플레이어 이름
         string playerJob;    //플레이어 직업
-        Item[] items;    //아이템 저장 배열\
+        public Item[] items;    //아이템 저장 배열\
 
         public Player(string name, string job) //생성자
         {
@@ -543,6 +666,7 @@ namespace PrivateProject
         {
             int i = 0;
             int j = 5;
+            Console.Clear();
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("인벤토리 - 장착 관리");
             Console.WriteLine("보유 중인 아이템을 관리할 수 잇습니다.\n");
@@ -748,6 +872,24 @@ namespace PrivateProject
             }
         }
 
+        public Item ItemDelete(Item item)       //아이템을 팔면 실행되는 메서드
+        {
+            for(int i = 0; i < items.Length; i++)
+            {
+                if (items[i].itemName == item.itemName)         //아이템의 이름이 같다면
+                {
+                    if (items[i].mountingStatus)                //장착상태였다면
+                    {
+                        items[i].mountingStatus = false;            //장착을 해제시키고
+                        ItemPerformanceApplication(items[i]);       //효과 적용후
+                    }
+                    items = items.Where(num => num != item).ToArray();  //아이템을 배열에서 삭제
+                    return item;    //아이템을 리턴해주어 상점에 추가 다수의 아이템이 삭제되는것을 방지하기 위해 여기서 리턴
+                }
+            }
+            return null;
+        }
+
         public void ItemList(Item item, int j)         //아이템 목록을 띄워주는 창
         {
             Console.SetCursorPosition(20, j);
@@ -761,7 +903,7 @@ namespace PrivateProject
             }
             else                //무기나 방어구가 아니면 잡동사니 나중에 다른 종류가 생기면 else if 문으로 추가
             {
-                Console.Write("| 잡동 사니 {0, -3}");
+                Console.Write("| 잡동 사니  ");
             }
             Console.WriteLine(String.Format("|  {0, -30}",item.itemExplanation));
         }
@@ -769,7 +911,7 @@ namespace PrivateProject
         public void ItemPerformanceApplication(Item item)        //아이템이 장착유무에 따른 효과 적용 함수
         {
             if (item.mountingStatus)                //아이템이 장착 상태라면
-            {
+            {   
                 if (item.sortation == "무기")
                 {
                     playerAttack += item.itemPerformance;

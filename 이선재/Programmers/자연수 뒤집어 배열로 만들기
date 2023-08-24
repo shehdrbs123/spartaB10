@@ -1,0 +1,12 @@
+public class Solution {
+    public int[] solution(long n) {
+        string sn = n.ToString();
+        int[] answer = new int[sn.Length];
+        
+        for(int i = sn.Length; i > 0; i--){
+            answer[sn.Length - i] = sn[i-1] - '0';
+        }
+        
+        return answer;
+    }
+}
